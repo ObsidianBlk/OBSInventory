@@ -7,6 +7,7 @@ class_name InventoryGrid
 # ------------------------------------------------------------------------------
 # Signals
 # ------------------------------------------------------------------------------
+signal stack_alt_interacted(id : int)
 
 # ------------------------------------------------------------------------------
 # Constants
@@ -22,6 +23,7 @@ const DEFAULT_THEME : Theme = preload("res://addons/OBSInventory/inventory_defau
 @export var cell_size : int = 1:						set = set_cell_size
 @export_subgroup("Input Events")
 @export var event_interact : StringName = &""
+@export var event_alt_interact : StringName = &""
 
 
 # ------------------------------------------------------------------------------
@@ -146,7 +148,9 @@ func _gui_input(event: InputEvent) -> void:
 				if grid_stash.can_item_fit(coord, stack.get_item(), stack.get_orientation()):
 					_TakeInventoryStack.call_deferred(container, coord)
 			accept_event()
-			
+	if event.is_action_pressed(event_alt_interact):
+		stack_alt_interacted.emit(_active_id)
+		accept_event()
 
 # ------------------------------------------------------------------------------
 # Private Methods
@@ -312,6 +316,42 @@ func add_inventory_grid_stack(igs : InventoryGridStack) -> InventoryGridStack:
 		return nigs
 		
 	return null
+
+func split_stack(id : int, amount : int = -1) -> void:
+	if grid_stash == null: return
+	if not grid_stash.stash.has_id(id): return
+	
+	# First, let's make sure there's space in the inventory for the item once we split it.
+	var item : Item = grid_stash.stash.get_item(id)
+	if item == null: return	
+	if not grid_stash.can_item_fit_any(item): return
+	
+	# Ok, get some amount of the item as a stack
+	var stack : ItemStack = grid_stash.remove_stack_by_id(id, amount)
+	if stack != null:
+		# Then add that item and amount back into the stash.
+		grid_stash.add_item(stack.item, stack.quantity)
+
+
+func split_stack_to_container(id : int, amount : int = -1) -> void:
+	if grid_stash == null: return
+	if not grid_stash.stash.has_id(id): return
+	
+	var container : InventoryTransitionContainer = _FindContainerNode()
+	if container == null: return
+	if container.is_holding_stack(): return
+	
+	var stack : ItemStack = grid_stash.remove_stack_by_id(id, amount)
+	if stack != null:
+		var igs : InventoryGridStack = InventoryGridStack.new()
+		igs.stack = stack
+		igs.cell_size = cell_size
+		igs.show_grid_mask = true
+		igs.highlight = false
+		container.add_child(igs)
+		igs.global_position = get_global_mouse_position()
+		igs.global_position.x -= (stack.item.inventory_mask.dimensions.x * cell_size) * 0.5
+		igs.global_position.y -= (stack.item.inventory_mask.dimensions.y * cell_size) * 0.5
 
 # ------------------------------------------------------------------------------
 # Handler Methods

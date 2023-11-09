@@ -1,12 +1,14 @@
-[gd_scene load_steps=18 format=3 uid="uid://os1jvdhn4h2g"]
+[gd_scene load_steps=20 format=3 uid="uid://os1jvdhn4h2g"]
 
 [ext_resource type="Script" path="res://scenes/grid_inventory_demo/grid_inventory_demo.gd" id="1_cc3gh"]
 [ext_resource type="Script" path="res://addons/OBSInventory/scripts/controls/InventoryTransitionContainer.gd" id="1_ehpf8"]
 [ext_resource type="Script" path="res://addons/OBSInventory/scripts/controls/inventory_grid.gd" id="2_8tj1e"]
+[ext_resource type="Script" path="res://scenes/grid_inventory_demo/inventory_window.gd" id="3_ro6gg"]
 [ext_resource type="Script" path="res://addons/OBSInventory/scripts/resources/grid.gd" id="3_wxmny"]
 [ext_resource type="Script" path="res://addons/OBSInventory/scripts/resources/item_grid_stash.gd" id="4_mysq0"]
 [ext_resource type="Script" path="res://addons/OBSInventory/scripts/resources/item_stash.gd" id="5_bue2p"]
 [ext_resource type="Script" path="res://addons/OBSInventory/scripts/joy_mouse.gd" id="7_4plwl"]
+[ext_resource type="Script" path="res://scenes/grid_inventory_demo/InventoryOperations.gd" id="9_o5kpg"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_de6a1"]
 content_margin_left = 4.0
@@ -118,29 +120,42 @@ script = ExtResource("1_cc3gh")
 script = ExtResource("7_4plwl")
 enabled = true
 
-[node name="Inventory1" type="VBoxContainer" parent="."]
+[node name="WindowContainer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Inventory1" type="VBoxContainer" parent="WindowContainer" node_paths=PackedStringArray("titlebar")]
 layout_mode = 0
 offset_left = 27.0
 offset_top = 9.0
 offset_right = 139.0
 offset_bottom = 249.0
 theme_override_constants/separation = -18
+script = ExtResource("3_ro6gg")
+titlebar = NodePath("TitleBar")
+input_interact = &"interact"
 
-[node name="TitleBar" type="PanelContainer" parent="Inventory1"]
+[node name="TitleBar" type="PanelContainer" parent="WindowContainer/Inventory1"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_de6a1")
 
-[node name="Label" type="Label" parent="Inventory1/TitleBar"]
+[node name="Label" type="Label" parent="WindowContainer/Inventory1/TitleBar"]
 layout_mode = 2
 text = "Inventory 1"
 horizontal_alignment = 1
 
-[node name="Body" type="PanelContainer" parent="Inventory1"]
+[node name="Body" type="PanelContainer" parent="WindowContainer/Inventory1"]
 show_behind_parent = true
 layout_mode = 2
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_2ri8g")
 
-[node name="InventoryGrid4x8" type="Control" parent="Inventory1/Body"]
+[node name="InventoryGrid4x8" type="Control" parent="WindowContainer/Inventory1/Body"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
@@ -150,29 +165,33 @@ grid_stash = SubResource("Resource_xucst")
 cell_size = 24
 event_interact = &"interact"
 
-[node name="Inventory2" type="VBoxContainer" parent="."]
+[node name="Inventory2" type="VBoxContainer" parent="WindowContainer" node_paths=PackedStringArray("titlebar")]
 layout_mode = 0
 offset_left = 176.0
 offset_top = 10.0
 offset_right = 336.0
 offset_bottom = 346.0
 theme_override_constants/separation = -18
+script = ExtResource("3_ro6gg")
+titlebar = NodePath("TitleBar")
+input_interact = &"interact"
 
-[node name="TitleBar" type="PanelContainer" parent="Inventory2"]
+[node name="TitleBar" type="PanelContainer" parent="WindowContainer/Inventory2"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_mjlgr")
 
-[node name="Label" type="Label" parent="Inventory2/TitleBar"]
+[node name="Label" type="Label" parent="WindowContainer/Inventory2/TitleBar"]
 layout_mode = 2
 text = "Inventory 2"
 horizontal_alignment = 1
 
-[node name="Body" type="PanelContainer" parent="Inventory2"]
+[node name="Body" type="PanelContainer" parent="WindowContainer/Inventory2"]
 show_behind_parent = true
 layout_mode = 2
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_0ow66")
 
-[node name="InventoryGrid6x12" type="Control" parent="Inventory2/Body"]
+[node name="InventoryGrid6x12" type="Control" parent="WindowContainer/Inventory2/Body"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 2
@@ -191,3 +210,66 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_ehpf8")
 event_interact = &"interact"
+
+[node name="InventoryOperations" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("9_o5kpg")
+
+[node name="CenterContainer" type="CenterContainer" parent="InventoryOperations"]
+layout_mode = 2
+
+[node name="OpSplit" type="VBoxContainer" parent="InventoryOperations/CenterContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="InventoryOperations/CenterContainer/OpSplit"]
+layout_mode = 2
+text = "Split Item Stack"
+
+[node name="HSeparator" type="HSeparator" parent="InventoryOperations/CenterContainer/OpSplit"]
+layout_mode = 2
+
+[node name="StackSlider" type="HBoxContainer" parent="InventoryOperations/CenterContainer/OpSplit"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="InventoryOperations/CenterContainer/OpSplit/StackSlider"]
+layout_mode = 2
+text = "Amount: "
+
+[node name="SliderStack" type="HSlider" parent="InventoryOperations/CenterContainer/OpSplit/StackSlider"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="LBLStack" type="Label" parent="InventoryOperations/CenterContainer/OpSplit/StackSlider"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="InventoryOperations/CenterContainer/OpSplit"]
+layout_mode = 2
+
+[node name="BtnSplit" type="Button" parent="InventoryOperations/CenterContainer/OpSplit/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Split"
+
+[node name="Spacer" type="Control" parent="InventoryOperations/CenterContainer/OpSplit/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BtnCancel" type="Button" parent="InventoryOperations/CenterContainer/OpSplit/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
+
+[connection signal="pressed" from="InventoryOperations/CenterContainer/OpSplit/Buttons/BtnSplit" to="InventoryOperations" method="_on_btn_split_pressed"]
+[connection signal="pressed" from="InventoryOperations/CenterContainer/OpSplit/Buttons/BtnCancel" to="InventoryOperations" method="_on_btn_cancel_pressed"]

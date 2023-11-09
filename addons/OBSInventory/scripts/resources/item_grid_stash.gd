@@ -164,6 +164,12 @@ func can_item_fit(coord : Vector2i, item : Item, orientation : int = Grid.ROT_NO
 		return _AvailableItemStack(coord, item, igrid) >= 0
 	return true
 
+func can_item_fit_any(item : Item, orientation : int = Grid.ROT_NONE) -> bool:
+	var igrid : Grid = item.inventory_mask.rotated(orientation)
+	var icoords : Array[Vector2i] = igrid.get_used_coords()
+	var coord : Vector2i = _FindAvailableGridCoord(icoords)
+	return coord.x >= 0
+
 func add_item(item : Item, amount : int = 1, orientation : int = Grid.ROT_NONE) -> Dictionary:
 	if item == null or amount <= 0: return {}
 	var igrid : Grid = item.inventory_mask.rotated(orientation)
@@ -245,8 +251,8 @@ func remove_item_at_coord(coord : Vector2i, amount : int = -1) -> ItemStack:
 	
 	return stack
 
-func remove_stack_by_id(id : int) -> ItemStack:
-	var stack : ItemStack = stash.remove_item_from(id)
+func remove_stack_by_id(id : int, amount : int = -1) -> ItemStack:
+	var stack : ItemStack = stash.remove_item_from(id, amount)
 	
 	if stack.id >= 0:
 		var gcoords : Array[Vector2i] = grid.find_value(id)

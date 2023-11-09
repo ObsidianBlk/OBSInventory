@@ -1,3 +1,4 @@
+@icon("res://addons/OBSInventory/icons/icon_inventory_transition_control.svg")
 extends Control
 class_name InventoryTransitionContainer
 
