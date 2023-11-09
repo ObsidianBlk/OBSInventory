@@ -1,0 +1,193 @@
+[gd_scene load_steps=18 format=3 uid="uid://os1jvdhn4h2g"]
+
+[ext_resource type="Script" path="res://scenes/grid_inventory_demo/grid_inventory_demo.gd" id="1_cc3gh"]
+[ext_resource type="Script" path="res://addons/OBSInventory/scripts/controls/InventoryTransitionContainer.gd" id="1_ehpf8"]
+[ext_resource type="Script" path="res://addons/OBSInventory/scripts/controls/inventory_grid.gd" id="2_8tj1e"]
+[ext_resource type="Script" path="res://addons/OBSInventory/scripts/resources/grid.gd" id="3_wxmny"]
+[ext_resource type="Script" path="res://addons/OBSInventory/scripts/resources/item_grid_stash.gd" id="4_mysq0"]
+[ext_resource type="Script" path="res://addons/OBSInventory/scripts/resources/item_stash.gd" id="5_bue2p"]
+[ext_resource type="Script" path="res://addons/OBSInventory/scripts/joy_mouse.gd" id="7_4plwl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_de6a1"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.741176, 0.741176, 0.741176, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.121569, 0.121569, 0.121569, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_left = 8.0
+expand_margin_right = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2ri8g"]
+content_margin_left = 8.0
+content_margin_top = 24.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.121569, 0.121569, 0.121569, 1)
+border_width_left = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.658824, 0.658824, 0.658824, 1)
+border_blend = true
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="Resource" id="Resource_hptpb"]
+script = ExtResource("3_wxmny")
+dimensions = Vector2i(4, 8)
+data = {}
+
+[sub_resource type="Resource" id="Resource_jf423"]
+script = ExtResource("5_bue2p")
+max_stacks = 100
+stack_list = Array[Resource("res://addons/OBSInventory/scripts/resources/item_stack.gd")]([])
+
+[sub_resource type="Resource" id="Resource_xucst"]
+script = ExtResource("4_mysq0")
+stash = SubResource("Resource_jf423")
+grid = SubResource("Resource_hptpb")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mjlgr"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.741176, 0.741176, 0.741176, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.121569, 0.121569, 0.121569, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_left = 8.0
+expand_margin_right = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0ow66"]
+content_margin_left = 8.0
+content_margin_top = 24.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.121569, 0.121569, 0.121569, 1)
+border_width_left = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.658824, 0.658824, 0.658824, 1)
+border_blend = true
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="Resource" id="Resource_35o3q"]
+script = ExtResource("3_wxmny")
+dimensions = Vector2i(6, 12)
+data = {}
+
+[sub_resource type="Resource" id="Resource_5ivwe"]
+script = ExtResource("5_bue2p")
+max_stacks = 100
+stack_list = Array[Resource("res://addons/OBSInventory/scripts/resources/item_stack.gd")]([])
+
+[sub_resource type="Resource" id="Resource_y6m1g"]
+script = ExtResource("4_mysq0")
+stash = SubResource("Resource_5ivwe")
+grid = SubResource("Resource_35o3q")
+
+[node name="GridInventoryDemo" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_cc3gh")
+
+[node name="JoyMouse" type="Node" parent="."]
+script = ExtResource("7_4plwl")
+enabled = true
+
+[node name="Inventory1" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 27.0
+offset_top = 9.0
+offset_right = 139.0
+offset_bottom = 249.0
+theme_override_constants/separation = -18
+
+[node name="TitleBar" type="PanelContainer" parent="Inventory1"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_de6a1")
+
+[node name="Label" type="Label" parent="Inventory1/TitleBar"]
+layout_mode = 2
+text = "Inventory 1"
+horizontal_alignment = 1
+
+[node name="Body" type="PanelContainer" parent="Inventory1"]
+show_behind_parent = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_2ri8g")
+
+[node name="InventoryGrid4x8" type="Control" parent="Inventory1/Body"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 2
+script = ExtResource("2_8tj1e")
+grid_stash = SubResource("Resource_xucst")
+cell_size = 24
+event_interact = &"interact"
+
+[node name="Inventory2" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 176.0
+offset_top = 10.0
+offset_right = 336.0
+offset_bottom = 346.0
+theme_override_constants/separation = -18
+
+[node name="TitleBar" type="PanelContainer" parent="Inventory2"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mjlgr")
+
+[node name="Label" type="Label" parent="Inventory2/TitleBar"]
+layout_mode = 2
+text = "Inventory 2"
+horizontal_alignment = 1
+
+[node name="Body" type="PanelContainer" parent="Inventory2"]
+show_behind_parent = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0ow66")
+
+[node name="InventoryGrid6x12" type="Control" parent="Inventory2/Body"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 2
+script = ExtResource("2_8tj1e")
+grid_stash = SubResource("Resource_y6m1g")
+cell_size = 24
+event_interact = &"interact"
+
+[node name="ITC" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_ehpf8")
+event_interact = &"interact"

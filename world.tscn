@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://c0pxwtchks5gv"]
+
+[ext_resource type="PackedScene" uid="uid://os1jvdhn4h2g" path="res://scenes/grid_inventory_demo/grid_inventory_demo.tscn" id="1_d77hf"]
+
+[node name="World" type="Node2D"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="GridInventoryDemo" parent="CanvasLayer" instance=ExtResource("1_d77hf")]

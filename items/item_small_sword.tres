@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Item" load_steps=5 format=3 uid="uid://crxkdri10fikd"]
+
+[ext_resource type="Script" path="res://addons/OBSInventory/scripts/resources/grid.gd" id="1_bkke3"]
+[ext_resource type="Texture2D" uid="uid://dt1bfw7f661rf" path="res://assets/graphics/Sword.svg" id="2_oh20c"]
+[ext_resource type="Script" path="res://addons/OBSInventory/scripts/resources/item.gd" id="3_erajd"]
+
+[sub_resource type="Resource" id="Resource_44dml"]
+script = ExtResource("1_bkke3")
+dimensions = Vector2i(1, 1)
+data = {
+Vector2i(0, 0): true
+}
+
+[resource]
+script = ExtResource("3_erajd")
+name = &"Small Sword"
+inventory_texture = ExtResource("2_oh20c")
+inventory_mask = SubResource("Resource_44dml")
+inventory_stack_size = 1
