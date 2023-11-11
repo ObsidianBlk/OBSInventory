@@ -164,6 +164,7 @@ script = ExtResource("2_8tj1e")
 grid_stash = SubResource("Resource_xucst")
 cell_size = 24
 event_interact = &"interact"
+event_alt_interact = &"alt_interact"
 
 [node name="Inventory2" type="VBoxContainer" parent="WindowContainer" node_paths=PackedStringArray("titlebar")]
 layout_mode = 0
@@ -199,6 +200,7 @@ script = ExtResource("2_8tj1e")
 grid_stash = SubResource("Resource_y6m1g")
 cell_size = 24
 event_interact = &"interact"
+event_alt_interact = &"alt_interact"
 
 [node name="ITC" type="Control" parent="."]
 layout_mode = 1

@@ -39,6 +39,8 @@ func grid_inventory_operation(id : int, ig : InventoryGrid) -> void:
 	_slider_stack.value = 0
 	_slider_stack.max_value = amount
 	_lbl_stack.text = "0"
+	
+	visible = true
 
 # ------------------------------------------------------------------------------
 # Handler Methods
@@ -48,7 +50,10 @@ func _on_slider_stack_value_changed(value : float) -> void:
 
 
 func _on_btn_split_pressed():
-	pass # Replace with function body.
+	if _ig == null or _id < 0: return
+	var amount : int = _slider_stack.value
+	_ig.split_stack(_id, amount)
+	_on_btn_cancel_pressed()
 
 
 func _on_btn_cancel_pressed():
