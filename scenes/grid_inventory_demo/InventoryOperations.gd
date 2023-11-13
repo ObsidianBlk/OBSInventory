@@ -55,9 +55,18 @@ func _on_btn_split_pressed():
 	_ig.split_stack(_id, amount)
 	_on_btn_cancel_pressed()
 
+func _on_btn_split_2_pressed() -> void:
+	if _ig == null or _id < 0: return
+	var amount : int = _slider_stack.value
+	_ig.split_stack_to_container(_id, amount)
+	_on_btn_cancel_pressed()
+
 
 func _on_btn_cancel_pressed():
 	if not visible: return
 	visible = false
 	_id = -1
 	_ig = null
+
+
+

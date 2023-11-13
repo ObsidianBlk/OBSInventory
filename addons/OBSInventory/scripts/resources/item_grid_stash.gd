@@ -254,7 +254,7 @@ func remove_item_at_coord(coord : Vector2i, amount : int = -1) -> ItemStack:
 func remove_stack_by_id(id : int, amount : int = -1) -> ItemStack:
 	var stack : ItemStack = stash.remove_item_from(id, amount)
 	
-	if stack.id >= 0:
+	if stack != null and stack.id >= 0:
 		var gcoords : Array[Vector2i] = grid.find_value(id)
 		for gcoord in gcoords:
 			grid.set_value(gcoord, null)

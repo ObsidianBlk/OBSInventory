@@ -80,31 +80,6 @@ func _process(delta: float) -> void:
 	if get_parent() is InventoryGrid: return
 	position = get_global_mouse_position() - _follow_offset
 
-#func _gui_input(event: InputEvent) -> void:
-#	if not _mouse_active: return
-#
-#	if event is InputEventMouseMotion:
-#		var mpos : Vector2 = get_local_mouse_position()
-#		var highlight_state : bool = highlight
-#		for coord in stack.item.inventory_mask.get_used_coords():
-#			var rect : Rect2 = Rect2(coord * cell_size, Vector2.ONE * cell_size)
-#			highlight_state = rect.has_point(mpos)
-#			if highlight_state == true:
-#				break
-#
-#		if _highlight != highlight_state:
-#			_highlight = highlight_state
-#			queue_redraw()
-#	if event.is_action_pressed("interact") and _highlight:
-#		_grabbed = true
-#		_grab_offset = get_local_mouse_position()
-#		grabbed.emit()
-#	if event.is_action_released("interact"):
-#		print("Released")
-#		if _grabbed:
-#			_grabbed = false
-#			grab_released.emit()
-
 func _get_minimum_size() -> Vector2:
 	if stack == null or stack.item == null: return Vector2.ZERO
 	if cell_size > 0:
@@ -245,15 +220,6 @@ func follow_mouse() -> void:
 # ------------------------------------------------------------------------------
 # Handler Methods
 # ------------------------------------------------------------------------------
-#func _on_mouse_entered() -> void:
-#	_mouse_active = true
-#
-#func _on_mouse_exited() -> void:
-#	print("Mouse Exited")
-#	_mouse_active = false
-#	if _highlight:
-#		_highlight = false
-#		queue_redraw()
 
 func _on_quantity_changed() -> void:
 	queue_redraw()

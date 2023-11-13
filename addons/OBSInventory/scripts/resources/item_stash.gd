@@ -205,7 +205,7 @@ func add_item_to(id : int, item : Item, amount : int = 1) -> int:
 func remove_item_from(id : int, amount : int = -1) -> ItemStack:
 	if not id in _data or amount == 0: return null
 	var stack : ItemStack = null
-	if amount < 0 or amount > _data[id].quantity:
+	if amount < 0 or amount >= _data[id].quantity:
 		stack = _data[id]
 		_data.erase(id)
 		item_removed.emit(id)

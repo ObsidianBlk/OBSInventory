@@ -215,6 +215,7 @@ event_interact = &"interact"
 
 [node name="InventoryOperations" type="PanelContainer" parent="."]
 unique_name_in_owner = true
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -258,15 +259,17 @@ horizontal_alignment = 1
 
 [node name="Buttons" type="HBoxContainer" parent="InventoryOperations/CenterContainer/OpSplit"]
 layout_mode = 2
+theme_override_constants/separation = 16
 
 [node name="BtnSplit" type="Button" parent="InventoryOperations/CenterContainer/OpSplit/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Split"
 
-[node name="Spacer" type="Control" parent="InventoryOperations/CenterContainer/OpSplit/Buttons"]
+[node name="BtnSplit2" type="Button" parent="InventoryOperations/CenterContainer/OpSplit/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 3
+text = "Split to Container"
 
 [node name="BtnCancel" type="Button" parent="InventoryOperations/CenterContainer/OpSplit/Buttons"]
 layout_mode = 2
@@ -274,4 +277,5 @@ size_flags_horizontal = 3
 text = "Cancel"
 
 [connection signal="pressed" from="InventoryOperations/CenterContainer/OpSplit/Buttons/BtnSplit" to="InventoryOperations" method="_on_btn_split_pressed"]
+[connection signal="pressed" from="InventoryOperations/CenterContainer/OpSplit/Buttons/BtnSplit2" to="InventoryOperations" method="_on_btn_split_2_pressed"]
 [connection signal="pressed" from="InventoryOperations/CenterContainer/OpSplit/Buttons/BtnCancel" to="InventoryOperations" method="_on_btn_cancel_pressed"]
