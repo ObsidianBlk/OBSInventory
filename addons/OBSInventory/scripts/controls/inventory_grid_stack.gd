@@ -1,26 +1,19 @@
 @tool
 @icon("res://addons/OBSInventory/icons/icon_inventory_grid_stack.svg")
-extends Control
+extends InventoryStackControl
 class_name InventoryGridStack
 
-# ------------------------------------------------------------------------------
-# Signals
-# ------------------------------------------------------------------------------
-signal grabbed()
-signal grab_released()
 
 # ------------------------------------------------------------------------------
 # Constants
 # ------------------------------------------------------------------------------
 
 const DEFAULT_NODE_GROUP : StringName = &"InventoryGridStack"
-const DEFAULT_THEME : Theme = preload("res://addons/OBSInventory/inventory_default_theme.tres")
 
 # ------------------------------------------------------------------------------
 # Export Variables
 # ------------------------------------------------------------------------------
 @export_category("Inventory Grid Stack")
-@export var stack : ItemStack = null:				set = set_stack
 @export var cell_size : int = 0:					set = set_cell_size
 @export var show_grid_mask : bool = true:			set = set_show_grid_mask
 @export var highlight : bool = false:				set = set_highlight
@@ -63,16 +56,13 @@ func set_highlight(h : bool) -> void:
 # Override Methods
 # ------------------------------------------------------------------------------
 func _ready() -> void:
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_tex_rect = TextureRect.new()
 	_tex_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_tex_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_tex_rect.stretch_mode = TextureRect.STRETCH_SCALE
 	_tex_rect.show_behind_parent = true
 	add_child(_tex_rect)
-	#mouse_entered.connect(_on_mouse_entered)
-	#mouse_exited.connect(_on_mouse_exited)
-	_ConnectItemStack()
+	super._ready()
 
 func _process(delta: float) -> void:
 	if not _follow_mode: return
@@ -131,15 +121,13 @@ func _notification(what : int):
 # ------------------------------------------------------------------------------
 func _ConnectItemStack() -> void:
 	if stack == null: return
-	if not stack.quantity_changed.is_connected(_on_quantity_changed):
-		stack.quantity_changed.connect(_on_quantity_changed)
+	super._ConnectItemStack()
 	if _tex_rect != null and stack.item != null and stack.item.inventory_texture != null:
 		_tex_rect.texture = stack.item.inventory_texture
 
 func _DisconnectItemStack() -> void:
 	if stack == null: return
-	if stack.quantity_changed.is_connected(_on_quantity_changed):
-		stack.quantity_changed.disconnect(_on_quantity_changed)
+	super._DisconnectItemStack()
 	if _tex_rect != null:
 		_tex_rect.texture = null
 

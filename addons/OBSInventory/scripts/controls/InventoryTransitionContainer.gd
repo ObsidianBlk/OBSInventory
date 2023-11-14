@@ -6,9 +6,9 @@ class_name InventoryTransitionContainer
 # ------------------------------------------------------------------------------
 # Signal
 # ------------------------------------------------------------------------------
-signal stack_obtained(stack : InventoryGridStack)
+signal stack_obtained(stack : InventoryStackControl)
 signal stack_released()
-signal stack_dropped(stack : InventoryGridStack)
+signal stack_dropped(stack : InventoryStackControl)
 
 # ------------------------------------------------------------------------------
 # Constants
@@ -25,7 +25,7 @@ const DEFAULT_NODE_GROUP : StringName = &"InventoryTransitionContainer"
 # ------------------------------------------------------------------------------
 # Variables
 # ------------------------------------------------------------------------------
-var _active_stack : InventoryGridStack = null
+var _active_stack : InventoryStackControl = null
 var _mouse_offset : Vector2 = Vector2.ZERO
 var _last_mouse_position : Vector2 = Vector2.ZERO
 var _mouse_position : Vector2 = Vector2.ZERO
@@ -70,7 +70,7 @@ func _CheckForDrop() -> void:
 func is_holding_stack() -> bool:
 	return _active_stack != null
 
-func peek_stack() -> InventoryGridStack:
+func peek_stack() -> InventoryStackControl:
 	return _active_stack
 
 func get_stack_offset() -> Vector2:
@@ -81,9 +81,9 @@ func get_stack_grid_offset() -> Vector2i:
 	if _active_stack == null: return Vector2i.ZERO
 	return Vector2i(_mouse_offset / _active_stack.cell_size)
 
-func take_stack() -> InventoryGridStack:
+func take_stack() -> InventoryStackControl:
 	if _active_stack == null: return null
-	var stack : InventoryGridStack = _active_stack
+	var stack : InventoryStackControl = _active_stack
 	remove_child(_active_stack)
 	#_active_stack = null
 	return stack
@@ -92,7 +92,7 @@ func take_stack() -> InventoryGridStack:
 # Handler Methods
 # ------------------------------------------------------------------------------
 func _on_child_entered_tree(child : Node) -> void:
-	if _active_stack == null and child is InventoryGridStack:
+	if _active_stack == null and child is InventoryStackControl:
 		_active_stack = child
 		_UpdateMouseOffset.call_deferred()
 		stack_obtained.emit(child)
