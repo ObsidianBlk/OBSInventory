@@ -13,9 +13,11 @@ layout_mode = 2
 [node name="Icon" type="TextureRect" parent="HLayout"]
 layout_mode = 2
 texture = ExtResource("1_t8uxq")
+expand_mode = 3
 
 [node name="ItemName" type="Label" parent="HLayout"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Inventory Item Name"
 
 [node name="VSeparator" type="VSeparator" parent="HLayout"]
