@@ -27,10 +27,6 @@ const DEFAULT_THEME : Theme = preload("res://addons/OBSInventory/inventory_defau
 # ------------------------------------------------------------------------------
 # Onready Variables
 # ------------------------------------------------------------------------------
-func _ready() -> void:
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	if not Engine.is_editor_hint():
-		_ConnectItemStack()
 
 # ------------------------------------------------------------------------------
 # Setters / Getters
@@ -40,12 +36,14 @@ func set_stack (s : ItemStack) -> void:
 		_DisconnectItemStack()
 		stack = s
 		_ConnectItemStack()
-		queue_redraw()
 
 # ------------------------------------------------------------------------------
 # Override Methods
 # ------------------------------------------------------------------------------
-
+func _ready() -> void:
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if not Engine.is_editor_hint():
+		_ConnectItemStack()
 
 # ------------------------------------------------------------------------------
 # Private Methods

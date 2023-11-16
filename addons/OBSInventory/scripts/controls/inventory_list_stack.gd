@@ -122,13 +122,11 @@ func _get_property_list() -> Array[Dictionary]:
 # Private Methods
 # ------------------------------------------------------------------------------
 func _UpdateTheme() -> void:
-	return
 	if _ilsbase == null: return
-	var panel : StyleBox = _GetThemeStylebox("panel_normal")
-	_ilsbase.add_theme_stylebox_override("panel", panel)
-	
-	if _item_name != null:
-		pass
+	_UpdatePanelTheme()
+	_UpdateItemNameLabelTheme()
+	_UpdateQuantityLabelTheme()
+	_UpdateQuantityValueLabelTheme()
 
 func _UpdatePanelTheme() -> void:
 	if _ilsbase == null: return
@@ -139,21 +137,75 @@ func _UpdatePanelTheme() -> void:
 		panel_var_name = &"hover"
 	elif _focused:
 		panel_var_name = &"focus"
+	var panel : StyleBox = _GetThemeStylebox(panel_var_name, _GetThemeType(), _themectrl)
+	_ilsbase.add_theme_stylebox_override("panel", panel)
 
-func _GetThemeFont(font_name : StringName) -> Font:
-	var type_name : StringName = DEFAULT_NODE_GROUP if theme_type_variation == &"" else theme_type_variation
+func _UpdateItemNameLabelTheme() -> void:
+	_UpdateLabelTheme(_item_name, [])
+
+func _UpdateQuantityLabelTheme() -> void:
+	_UpdateLabelTheme(_quantity_label, [])
+
+func _UpdateQuantityValueLabelTheme() -> void:
+	_UpdateLabelTheme(_quantity_value, [])
+
+func _UpdateLabelTheme(lbl : Label, name_list : Array[Dictionary]) -> void:
+	if lbl == null: return
+	for item in name_list:
+		pass
+	# TODO: Actually finish this method off!
+
+func _GetThemeType() -> StringName:
+	if theme_type_variation != &"":
+		return theme_type_variation
+	return DEFAULT_NODE_GROUP
+
+func _GetThemeColor(color_name : StringName, type_name : StringName, themectrl : ThemeCTRL = null) -> Color:
+	if themectrl != null:
+		var property : StringName = ThemeCTRL.Generate_Property_Name(color_name, Theme.DATA_TYPE_COLOR)
+		if themectrl.is_override_set(property):
+			return themectrl.get_override(property)
+	
+	if has_theme_color(color_name, type_name):
+		return get_theme_color(color_name, type_name)
+	return DEFAULT_THEME.get_color(color_name, type_name)
+
+func _GetThemeConstant(const_name : StringName, type_name : StringName, themectrl : ThemeCTRL = null) -> int:
+	if themectrl != null:
+		var property : StringName = ThemeCTRL.Generate_Property_Name(const_name, Theme.DATA_TYPE_CONSTANT)
+		if themectrl.is_override_set(property):
+			return themectrl.get_override(property)
+	
+	if has_theme_constant(const_name, type_name):
+		return get_theme_constant(const_name, type_name)
+	return DEFAULT_THEME.get_constant(const_name, type_name)
+
+func _GetThemeFont(font_name : StringName, type_name : StringName, themectrl : ThemeCTRL = null) -> Font:
+	if themectrl != null:
+		var property : StringName = ThemeCTRL.Generate_Property_Name(font_name, Theme.DATA_TYPE_FONT)
+		if themectrl.is_override_set(property):
+			return themectrl.get_override(property)
+	
 	if has_theme_font(font_name, type_name):
 		return get_theme_font(font_name, type_name)
 	return DEFAULT_THEME.get_font(font_name, type_name)
 
-func _GetThemeFontSize(font_size_name : StringName) -> int:
-	var type_name : StringName = DEFAULT_NODE_GROUP if theme_type_variation == &"" else theme_type_variation
+func _GetThemeFontSize(font_size_name : StringName, type_name : StringName, themectrl : ThemeCTRL = null) -> int:
+	if themectrl != null:
+		var property : StringName = ThemeCTRL.Generate_Property_Name(font_size_name, Theme.DATA_TYPE_FONT_SIZE)
+		if themectrl.is_override_set(property):
+			return themectrl.get_override(property)
+	
 	if has_theme_font_size(font_size_name, type_name):
 		return get_theme_font_size(font_size_name, type_name)
 	return DEFAULT_THEME.get_font_size(font_size_name, type_name)
 
-func _GetThemeStylebox(style_name : StringName) -> StyleBox:
-	var type_name : StringName = DEFAULT_NODE_GROUP if theme_type_variation == &"" else theme_type_variation
+func _GetThemeStylebox(style_name : StringName, type_name : StringName, themectrl : ThemeCTRL = null) -> StyleBox:
+	if themectrl != null:
+		var property : StringName = ThemeCTRL.Generate_Property_Name(style_name, Theme.DATA_TYPE_STYLEBOX)
+		if themectrl.is_override_set(property):
+			return themectrl.get_override(property)
+			
 	if has_theme_stylebox(style_name, type_name):
 		return get_theme_stylebox(style_name, type_name)
 	return DEFAULT_THEME.get_stylebox(style_name, DEFAULT_NODE_GROUP)
@@ -167,11 +219,14 @@ func _GetThemeStylebox(style_name : StringName) -> StyleBox:
 # Handler Methods
 # ------------------------------------------------------------------------------
 func _on_quantity_changed() -> void:
-	queue_redraw()
+	if _quantity_value != null and stack != null:
+		_quantity_value.text = "%s"%[stack.quantity]
 
 func _on_mouse_entered() -> void:
 	_mouse_within = true
+	_UpdatePanelTheme()
 
 func _on_mouse_exited() -> void:
 	_mouse_within = false
+	_UpdatePanelTheme()
 

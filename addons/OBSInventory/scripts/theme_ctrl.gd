@@ -32,16 +32,28 @@ func _init(items : Array[Array]):
 static func Generate_Property_Name(base_name : String, type : Theme.DataType) -> StringName:
 	match type:
 		Theme.DATA_TYPE_COLOR:
+			if base_name.begins_with("theme_override_colors/"):
+				return StringName(base_name)
 			return &"theme_override_colors/%s"%[base_name]
 		Theme.DATA_TYPE_CONSTANT:
+			if base_name.begins_with("theme_override_constants/"):
+				return StringName(base_name)
 			return &"theme_override_constants/%s"%[base_name]
 		Theme.DATA_TYPE_FONT:
+			if base_name.begins_with("theme_override_fonts/"):
+				return StringName(base_name)
 			return &"theme_override_fonts/%s"%[base_name]
 		Theme.DATA_TYPE_FONT_SIZE:
+			if base_name.begins_with("theme_override_font_sizes/"):
+				return StringName(base_name)
 			return &"theme_override_font_sizes/%s"%[base_name]
 		Theme.DATA_TYPE_ICON:
+			if base_name.begins_with("theme_override_icons/"):
+				return StringName(base_name)
 			return &"theme_override_icons/%s"%[base_name]
 		Theme.DATA_TYPE_STYLEBOX:
+			if base_name.begins_with("theme_override_styles/"):
+				return StringName(base_name)
 			return &"theme_override_styles/%s"%[base_name]
 	return &""
 
@@ -55,6 +67,11 @@ func get_override(property : StringName) -> Variant:
 	if property in _overrides:
 		return _overrides[property].value
 	return null
+
+func is_override_set(property : StringName) -> bool:
+	if property in _overrides:
+		return _overrides[property].value != null
+	return false
 
 func get_override_short_name(property : StringName) -> StringName:
 	if property in _overrides:
