@@ -265,9 +265,17 @@ func _GetThemeFont(font_name : StringName, type_name : StringName, themectrl : T
 		if themectrl.is_override_set(property):
 			return themectrl.get_override(property)
 	
-	if has_theme_font(font_name, type_name):
-		return get_theme_font(font_name, type_name)
-	return DEFAULT_THEME.get_font(font_name, type_name)
+	# This is a hackey workaround to test if font_name and type_name are explicitly
+	# defined for a Font. If the returned get_theme_font() call returns the same Font
+	# object as get_theme_default_font(), then the Font was NOT overridden in a theme, so
+	# use the DEFAULT_THEME font.
+	var def_font : Font = get_theme_default_font()
+	var theme_font : Font = get_theme_font(font_name, type_name)
+	if def_font == theme_font:
+		return DEFAULT_THEME.get_font(font_name, type_name)
+	return theme_font
+	#if has_theme_font(font_name, type_name):
+	#	return get_theme_font(font_name, type_name)
 
 func _GetThemeFontSize(font_size_name : StringName, type_name : StringName, themectrl : ThemeCTRL = null) -> int:
 	if themectrl != null:
