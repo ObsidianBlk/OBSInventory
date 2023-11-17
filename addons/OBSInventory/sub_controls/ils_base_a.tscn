@@ -10,10 +10,15 @@ grow_horizontal = 2
 [node name="HLayout" type="HBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="Icon" type="TextureRect" parent="HLayout"]
+[node name="IconContainer" type="AspectRatioContainer" parent="HLayout"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="HLayout/IconContainer"]
 layout_mode = 2
 texture = ExtResource("1_t8uxq")
-expand_mode = 3
+expand_mode = 1
+stretch_mode = 5
 
 [node name="ItemName" type="Label" parent="HLayout"]
 layout_mode = 2

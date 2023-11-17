@@ -6,6 +6,7 @@ class_name ItemStack
 # Signals
 # ------------------------------------------------------------------------------
 signal quantity_changed()
+signal item_changed()
 
 # ------------------------------------------------------------------------------
 # Export Variables
@@ -34,10 +35,10 @@ func set_item(itm : Item) -> void:
 	item = itm
 	if item == null:
 		quantity = 0
-		quantity_changed.emit()
 	elif quantity > item.inventory_stack_size:
 		quantity = item.inventory_stack_size
-		quantity_changed.emit()
+	quantity_changed.emit()
+	item_changed.emit()
 
 func set_quantity(q : int) -> void:
 	if q < 0: return
