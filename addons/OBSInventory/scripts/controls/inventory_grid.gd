@@ -102,11 +102,9 @@ func _notification(what: int) -> void:
 		NOTIFICATION_MOUSE_ENTER:
 			grab_focus.call_deferred()
 			grab_click_focus.call_deferred()
-			_InformContainerOverGrid()
 		NOTIFICATION_MOUSE_EXIT:
 			_hover_coord = Vector2i(-1,-1)
 			_active_id = -1
-			_InformContainerOverGrid(false)
 			queue_redraw()
 
 func _gui_input(event: InputEvent) -> void:
@@ -170,11 +168,6 @@ func _FindContainerNode() -> InventoryTransitionContainer:
 				return node
 	
 	return null
-
-func _InformContainerOverGrid(is_over : bool = true) -> void:
-	var container : InventoryTransitionContainer = _FindContainerNode()
-	if container == null: return
-	
 
 func _ConnectGridStash() -> void:
 	if grid_stash == null: return

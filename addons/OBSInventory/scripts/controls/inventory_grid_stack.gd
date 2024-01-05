@@ -25,6 +25,12 @@ var _tex_rect : TextureRect = null
 var _follow_mode : bool = false
 var _follow_offset : Vector2 = Vector2.ZERO
 
+var _themectrl : ThemeCTRL = ThemeCTRL.new([
+	["grid_cell", Theme.DATA_TYPE_STYLEBOX],
+	["font", Theme.DATA_TYPE_FONT],
+	["font_size", Theme.DATA_TYPE_FONT_SIZE]
+])
+
 # ------------------------------------------------------------------------------
 # Setters
 # ------------------------------------------------------------------------------
@@ -64,6 +70,22 @@ func _ready() -> void:
 	add_child(_tex_rect)
 	super._ready()
 
+func _get(property : StringName) -> Variant:
+	if _themectrl.has_override(property):
+		return _themectrl.get_override(property)
+	return null
+
+func _set(property : StringName, value : Variant) -> bool:
+	if _themectrl.has_override(property):
+		var res : bool = _themectrl.set_override(property, value)
+		if res:
+			queue_redraw()
+		return res
+	return false
+
+func _get_property_list() -> Array[Dictionary]:
+	return _themectrl.get_theme_override_property_list()
+
 func _process(delta: float) -> void:
 	if not _follow_mode: return
 	if not is_inside_tree(): return
@@ -86,7 +108,7 @@ func _draw() -> void:
 	if vcell_size.x < 1 or vcell_size.y < 1: return
 	
 	if show_grid_mask:
-		var style : StyleBox = _GetThemeStylebox(&"grid_cell")
+		var style : StyleBox = _GetThemeStylebox(&"grid_cell", _GetThemeType(), _themectrl)
 		for y in range(stack.item.inventory_mask.dimensions.y):
 			for x in range(stack.item.inventory_mask.dimensions.x):
 				var coord : Vector2i = Vector2i(x, y)
@@ -104,8 +126,8 @@ func _draw() -> void:
 	if stack.quantity > 1:
 		var str : String = "%s"%[stack.quantity]
 		var font_origin : Vector2 = vcell_size * Vector2(stack.item.inventory_mask.dimensions)
-		var font : Font = _GetThemeFont(&"font")
-		var font_size : int = _GetThemeFontSize(&"font_size")
+		var font : Font = _GetThemeFont(&"font", _GetThemeType(), _themectrl)
+		var font_size : int = _GetThemeFontSize(&"font_size", _GetThemeType(), _themectrl)
 		var string_size : Vector2 = font.get_string_size(str, HORIZONTAL_ALIGNMENT_RIGHT, -1, font_size)
 		draw_string(font, font_origin - Vector2(string_size.x, 0), str, HORIZONTAL_ALIGNMENT_RIGHT, -1, font_size)
 
@@ -154,23 +176,28 @@ func _GetSizeVector() -> Vector2:
 		)
 	return vcell_size
 
-func _GetThemeFont(font_name : StringName) -> Font:
-	var type_name : StringName = DEFAULT_NODE_GROUP if theme_type_variation == &"" else theme_type_variation
-	if has_theme_font(font_name, type_name):
-		return get_theme_font(font_name, type_name)
-	return DEFAULT_THEME.get_font(font_name, type_name)
+func _GetThemeType() -> StringName:
+	if theme_type_variation != &"":
+		return theme_type_variation
+	return DEFAULT_NODE_GROUP
 
-func _GetThemeFontSize(font_size_name : StringName) -> int:
-	var type_name : StringName = DEFAULT_NODE_GROUP if theme_type_variation == &"" else theme_type_variation
-	if has_theme_font_size(font_size_name, type_name):
-		return get_theme_font_size(font_size_name, type_name)
-	return DEFAULT_THEME.get_font_size(font_size_name, type_name)
-
-func _GetThemeStylebox(style_name : StringName) -> StyleBox:
-	var type_name : StringName = DEFAULT_NODE_GROUP if theme_type_variation == &"" else theme_type_variation
-	if has_theme_stylebox(style_name, type_name):
-		return get_theme_stylebox(style_name, type_name)
-	return DEFAULT_THEME.get_stylebox(style_name, DEFAULT_NODE_GROUP)
+#func _GetThemeFont(font_name : StringName) -> Font:
+	#var type_name : StringName = DEFAULT_NODE_GROUP if theme_type_variation == &"" else theme_type_variation
+	#if has_theme_font(font_name, type_name):
+		#return get_theme_font(font_name, type_name)
+	#return DEFAULT_THEME.get_font(font_name, type_name)
+#
+#func _GetThemeFontSize(font_size_name : StringName) -> int:
+	#var type_name : StringName = DEFAULT_NODE_GROUP if theme_type_variation == &"" else theme_type_variation
+	#if has_theme_font_size(font_size_name, type_name):
+		#return get_theme_font_size(font_size_name, type_name)
+	#return DEFAULT_THEME.get_font_size(font_size_name, type_name)
+#
+#func _GetThemeStylebox(style_name : StringName) -> StyleBox:
+	#var type_name : StringName = DEFAULT_NODE_GROUP if theme_type_variation == &"" else theme_type_variation
+	#if has_theme_stylebox(style_name, type_name):
+		#return get_theme_stylebox(style_name, type_name)
+	#return DEFAULT_THEME.get_stylebox(style_name, DEFAULT_NODE_GROUP)
 
 
 # ------------------------------------------------------------------------------
