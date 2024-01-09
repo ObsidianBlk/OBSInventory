@@ -105,7 +105,6 @@ func _ready() -> void:
 		_item_name = _ilsbase.get_node_or_null("HLayout/ItemName")
 		_quantity_label = _ilsbase.get_node_or_null("HLayout/VLayout/QuantityLabel")
 		_quantity_value = _ilsbase.get_node_or_null("HLayout/VLayout/QuantityValue")
-	print("From Ready")
 	_PostStackChange()
 	_UpdateTheme()
 
@@ -138,7 +137,6 @@ func _get_minimum_size() -> Vector2:
 # "Virtual" Methods
 # ------------------------------------------------------------------------------
 func _PostStackChange() -> void:
-	print("Post Stack Change: ", _item_name)
 	if _item_name == null: return
 	if stack != null:
 		if stack.item != null:
@@ -152,6 +150,7 @@ func _PostStackChange() -> void:
 		_item_name.text = ""
 		_icon.texture = DEFAULT_ITEM_ICON
 		_quantity_value.text = "0"
+	resized.emit()
 
 # ------------------------------------------------------------------------------
 # Private Methods
@@ -252,7 +251,6 @@ func _GetThemeType() -> StringName:
 # Handler Methods
 # ------------------------------------------------------------------------------
 func _on_item_changed() -> void:
-	print("From Item Changed")
 	_PostStackChange()
 
 func _on_quantity_changed() -> void:

@@ -63,6 +63,10 @@ func _DisconnectStash() -> void:
 		stash.item_added.disconnect(_on_stash_item_added)
 	if stash.item_removed.is_connected(_on_stash_item_removed):
 		stash.item_removed.disconnect(_on_stash_item_removed)
+	if stash.item_changed.is_connected(_on_stash_item_changed):
+		stash.item_changed.disconnect(_on_stash_item_changed)
+	if stash.changed.is_connected(_on_stash_changed):
+		stash.changed.disconnect(_on_stash_changed)
 
 func _ConnectStash() -> void:
 	if stash == null: return
@@ -74,6 +78,10 @@ func _ConnectStash() -> void:
 		stash.item_added.connect(_on_stash_item_added)
 	if not stash.item_removed.is_connected(_on_stash_item_removed):
 		stash.item_removed.connect(_on_stash_item_removed)
+	if not stash.item_changed.is_connected(_on_stash_item_changed):
+		stash.item_changed.connect(_on_stash_item_changed)
+	if not stash.changed.is_connected(_on_stash_changed):
+		stash.changed.connect(_on_stash_changed)
 
 func _EmptyList() -> void:
 	for id : int in _stack_nodes.keys():
@@ -82,16 +90,20 @@ func _EmptyList() -> void:
 func _BuildListFromStash() -> void:
 	if stash == null: return
 	
-	var ids : PackedInt32Array = stash.get_ids()
+	var ids : PackedInt64Array = stash.get_ids()
 	for idx : int in range(ids.size()):
 		_AddItemToList(ids[idx])
+	queue_sort()
+	#sort_children.emit()
 
 func _AddItemToList(id : int) -> void:
 	if id in _stack_nodes: return
-	var list_stack : InventoryListStack = InventoryListStack.new()
-	list_stack.stack = stash.get_item_stack(id)
-	add_child(list_stack)
-	_stack_nodes[id] = list_stack
+	var stack : ItemStack = stash.get_item_stack(id)
+	if stack != null:
+		var list_stack : InventoryListStack = InventoryListStack.new()
+		list_stack.stack = stack
+		add_child(list_stack)
+		_stack_nodes[id] = list_stack
 
 func _RemoveItemFromList(id : int) -> void:
 	if not id in _stack_nodes: return
@@ -127,9 +139,24 @@ func _on_stash_data_reset() -> void:
 
 func _on_stash_emptied() -> void:
 	_EmptyList()
+	queue_sort()
+	#sort_children.emit()
 
 func _on_stash_item_added(id : int) -> void:
 	_AddItemToList(id)
+	queue_sort()
+	#sort_children.emit()
 
 func _on_stash_item_removed(id : int) -> void:
 	_RemoveItemFromList(id)
+	queue_sort()
+	#sort_children.emit()
+
+func _on_stash_item_changed(id : int) -> void:
+	print("Stack changed: ", id)
+	queue_sort()
+	#sort_children.emit()
+
+func _on_stash_changed() -> void:
+	queue_sort()
+	#sort_children.emit()

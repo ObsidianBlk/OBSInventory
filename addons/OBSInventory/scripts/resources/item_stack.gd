@@ -29,6 +29,7 @@ func set_id(nid : int) -> void:
 	# <id> can only be set once, then it's "read only"
 	if id < 0 and nid >= 0:
 		id = nid
+		changed.emit()
 
 func set_item(itm : Item) -> void:
 	if itm == item: return
@@ -39,6 +40,7 @@ func set_item(itm : Item) -> void:
 		quantity = item.inventory_stack_size
 	quantity_changed.emit()
 	item_changed.emit()
+	changed.emit()
 
 func set_quantity(q : int) -> void:
 	if q < 0: return
@@ -47,9 +49,11 @@ func set_quantity(q : int) -> void:
 		if nq != quantity:
 			quantity = nq
 			quantity_changed.emit()
+			changed.emit()
 	else:
 		quantity = q
 		quantity_changed.emit()
+		changed.emit()
 
 # ------------------------------------------------------------------------------
 # Override Methods
@@ -73,13 +77,16 @@ func set_metadata_dict(meta : Dictionary) -> void:
 	for key in meta:
 		if typeof(key) == TYPE_STRING:
 			_meta_data[key] = meta[key]
+	changed.emit()
 
 func set_metadata(key : String, value : Variant) -> void:
 	if value == null:
 		if key in meta_data:
 			_meta_data.erase(key)
+			changed.emit()
 	else:
 		_meta_data[key] = value
+		changed.emit()
 
 func get_metadata(key : String, default : Variant = null) -> Variant:
 	if key in _meta_data:

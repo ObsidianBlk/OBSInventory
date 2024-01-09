@@ -11,6 +11,7 @@ signal data_reset()
 signal item_added(id : int)
 signal item_quantity_changed(id : int)
 signal item_removed(id : int)
+signal item_changed(id : int)
 
 # ------------------------------------------------------------------------------
 # Constants and ENUMs
@@ -40,11 +41,12 @@ func set_max_stacks(ms : int) -> void:
 		_UpdateStackCount.call_deferred()
 
 func set_stack_list(sl : Array[ItemStack]) -> void:
+	_DisconnectStacksInData()
 	_data.clear()
 	for stack in sl:
 		if stack == null:
 			stack = ItemStack.new(_GenRandomID(10))
-			print(stack.id)
+			#print(stack.id)
 			if stack.id < 0: continue
 		if stack.id in _data:
 			printerr("STASH WARNING: Stack list contains duplicate stack entry (id: ", stack.id, "). Skipping.")
@@ -53,7 +55,9 @@ func set_stack_list(sl : Array[ItemStack]) -> void:
 			printerr("STASH WARNING: Stack list exceeds size.")
 			break
 		_data[stack.id] = stack
+	_ConnectStacksInData()
 	data_reset.emit()
+	changed.emit()
 
 func get_stack_list() -> Array[ItemStack]:
 	var list : Array[ItemStack] = []
@@ -90,6 +94,17 @@ func _UpdateStackCount() -> void:
 		var stack : ItemStack = remove_item_from(key)
 		if stack == null:
 			printerr("STACK UPDATE WARNING: Removed empty ID.")
+	changed.emit()
+
+func _DisconnectStacksInData() -> void:
+	for stack : ItemStack in _data.values():
+		if stack.changed.is_connected(_on_stack_item_changed.bind(stack.id)):
+			stack.changed.disconnect(_on_stack_item_changed.bind(stack.id))
+
+func _ConnectStacksInData() -> void:
+	for stack : ItemStack in _data.values():
+		if not stack.changed.is_connected(_on_stack_item_changed.bind(stack.id)):
+			stack.changed.connect(_on_stack_item_changed.bind(stack.id))
 
 func _GenRandomID(attempts : int) -> int:
 	var id = randi()
@@ -105,6 +120,7 @@ func _AddDiscreteItem(item : Item, amount : int = 1) -> Dictionary:
 	_data[id] = ItemStack.new(id, item, min(amount, item.inventory_stack_size))
 	
 	item_added.emit(id)
+	changed.emit()
 	return {"id":id, "remaining": amount - _data[id].quantity}
 
 # ------------------------------------------------------------------------------
@@ -123,8 +139,8 @@ func is_full() -> bool:
 func has_id(id : int) -> bool:
 	return id in _data
 
-func get_ids() -> PackedInt32Array:
-	return PackedInt32Array(_data.keys())
+func get_ids() -> PackedInt64Array:
+	return PackedInt64Array(_data.keys())
 
 func get_item_stacks(item : Item) -> Array[ItemStack]:
 	var items : Array[ItemStack] = []
@@ -209,9 +225,18 @@ func remove_item_from(id : int, amount : int = -1) -> ItemStack:
 		stack = _data[id]
 		_data.erase(id)
 		item_removed.emit(id)
+		changed.emit()
 	else:
 		_data[id].quantity -= amount
 		item_quantity_changed.emit(id)
 		#item_removed.emit(id, _data[id].item, amount)
 		stack = ItemStack.new(-1, _data[id].item, amount)
 	return stack
+
+
+# ------------------------------------------------------------------------------
+# Handler Methods
+# ------------------------------------------------------------------------------
+func _on_stack_item_changed(id : int) -> void:
+	item_changed.emit(id)
+	changed.emit()
