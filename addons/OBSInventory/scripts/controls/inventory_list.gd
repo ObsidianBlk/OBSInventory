@@ -1,4 +1,6 @@
+@tool
 extends VBoxContainer
+class_name InventoryList
 
 
 # ------------------------------------------------------------------------------
@@ -28,7 +30,7 @@ const DEFAULT_THEME : Theme = preload("res://addons/OBSInventory/inventory_defau
 # Variables
 # ------------------------------------------------------------------------------
 var _inv_item_container : WeakRef = weakref(null)
-
+var _stack_nodes : Dictionary = {}
 
 # ------------------------------------------------------------------------------
 # Setters
@@ -74,10 +76,28 @@ func _ConnectStash() -> void:
 		stash.item_removed.connect(_on_stash_item_removed)
 
 func _EmptyList() -> void:
-	pass
+	for id : int in _stack_nodes.keys():
+		_RemoveItemFromList(id)
 
 func _BuildListFromStash() -> void:
 	if stash == null: return
+	
+	var ids : PackedInt32Array = stash.get_ids()
+	for idx : int in range(ids.size()):
+		_AddItemToList(ids[idx])
+
+func _AddItemToList(id : int) -> void:
+	if id in _stack_nodes: return
+	var list_stack : InventoryListStack = InventoryListStack.new()
+	list_stack.stack = stash.get_item_stack(id)
+	add_child(list_stack)
+	_stack_nodes[id] = list_stack
+
+func _RemoveItemFromList(id : int) -> void:
+	if not id in _stack_nodes: return
+	remove_child(_stack_nodes[id])
+	_stack_nodes[id].queue_free()
+	_stack_nodes.erase(id)
 
 func _FindContainerNode() -> InventoryTransitionContainer:
 	if _inv_item_container.get_ref() != null:
@@ -101,13 +121,15 @@ func _FindContainerNode() -> InventoryTransitionContainer:
 # Handler Methods
 # ------------------------------------------------------------------------------
 func _on_stash_data_reset() -> void:
-	pass
+	_EmptyList()
+	if stash.size() > 0:
+		_BuildListFromStash()
 
 func _on_stash_emptied() -> void:
-	pass
+	_EmptyList()
 
 func _on_stash_item_added(id : int) -> void:
-	pass
+	_AddItemToList(id)
 
 func _on_stash_item_removed(id : int) -> void:
-	pass
+	_RemoveItemFromList(id)

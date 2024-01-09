@@ -7,6 +7,8 @@ extends Control
 @export_category("Inventory Window")
 @export var titlebar : PanelContainer = null:		set = set_titlebar
 @export var input_interact : StringName = &""
+@export var animation_player : AnimationPlayer = null
+@export var focus_animation : StringName = &""
 
 
 # ------------------------------------------------------------------------------
@@ -59,7 +61,10 @@ func _ConnectTitlebar() -> void:
 func _MakeTopWindow() -> void:
 	var parent : Node = get_parent()
 	if parent == null: return
-	parent.move_child(self, -1) 
+	parent.move_child(self, -1)
+	if animation_player != null:
+		if not animation_player.is_playing():
+			animation_player.play(focus_animation)
 
 # ------------------------------------------------------------------------------
 # Handler Methods

@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="ItemStash" load_steps=9 format=3 uid="uid://d330u4v48bnl"]
+
+[ext_resource type="Script" path="res://addons/OBSInventory/scripts/resources/item_stash.gd" id="1_q2avk"]
+[ext_resource type="Resource" uid="uid://cj4k0qodiesv7" path="res://items/item_potion.tres" id="2_ewir0"]
+[ext_resource type="Script" path="res://addons/OBSInventory/scripts/resources/item_stack.gd" id="3_srevq"]
+[ext_resource type="Resource" uid="uid://crxkdri10fikd" path="res://items/item_small_sword.tres" id="4_oywj1"]
+[ext_resource type="Resource" uid="uid://bt8bvp6l8fwa5" path="res://items/item_sword.tres" id="5_0smg1"]
+
+[sub_resource type="Resource" id="Resource_0kabw"]
+script = ExtResource("3_srevq")
+id = 3844532475
+item = ExtResource("2_ewir0")
+quantity = 1
+meta_data = {}
+
+[sub_resource type="Resource" id="Resource_nejt7"]
+script = ExtResource("3_srevq")
+id = 729708127
+item = ExtResource("4_oywj1")
+quantity = 1
+meta_data = {}
+
+[sub_resource type="Resource" id="Resource_myckb"]
+script = ExtResource("3_srevq")
+id = 2326004082
+item = ExtResource("5_0smg1")
+quantity = 1
+meta_data = {}
+
+[resource]
+script = ExtResource("1_q2avk")
+max_stacks = 10
+stack_list = Array[ExtResource("3_srevq")]([SubResource("Resource_0kabw"), SubResource("Resource_nejt7"), SubResource("Resource_myckb")])

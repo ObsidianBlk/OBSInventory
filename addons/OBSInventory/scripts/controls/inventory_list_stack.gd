@@ -93,6 +93,7 @@ func set_highlight(h : bool) -> void:
 # Override Methods
 # ------------------------------------------------------------------------------
 func _ready() -> void:
+	super._ready()
 	_ilsbase = ILS_BASE_CONTROL.instantiate()
 	if _ilsbase:
 		_ilsbase.mouse_entered.connect(_on_mouse_entered)
@@ -104,6 +105,7 @@ func _ready() -> void:
 		_item_name = _ilsbase.get_node_or_null("HLayout/ItemName")
 		_quantity_label = _ilsbase.get_node_or_null("HLayout/VLayout/QuantityLabel")
 		_quantity_value = _ilsbase.get_node_or_null("HLayout/VLayout/QuantityValue")
+	print("From Ready")
 	_PostStackChange()
 	_UpdateTheme()
 
@@ -136,6 +138,7 @@ func _get_minimum_size() -> Vector2:
 # "Virtual" Methods
 # ------------------------------------------------------------------------------
 func _PostStackChange() -> void:
+	print("Post Stack Change: ", _item_name)
 	if _item_name == null: return
 	if stack != null:
 		if stack.item != null:
@@ -249,6 +252,7 @@ func _GetThemeType() -> StringName:
 # Handler Methods
 # ------------------------------------------------------------------------------
 func _on_item_changed() -> void:
+	print("From Item Changed")
 	_PostStackChange()
 
 func _on_quantity_changed() -> void:

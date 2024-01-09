@@ -44,8 +44,8 @@ func set_stack (s : ItemStack) -> void:
 # ------------------------------------------------------------------------------
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	if not Engine.is_editor_hint():
-		_ConnectItemStack()
+	#if not Engine.is_editor_hint():
+	_ConnectItemStack()
 
 # ------------------------------------------------------------------------------
 # "Virtual" Methods
@@ -60,6 +60,7 @@ func _PostStackChange() -> void:
 # Private Methods
 # ------------------------------------------------------------------------------
 func _ConnectItemStack() -> void:
+	print("Connect Stack Called: ", stack)
 	if stack == null: return
 	if not stack.quantity_changed.is_connected(_on_quantity_changed):
 		stack.quantity_changed.connect(_on_quantity_changed)

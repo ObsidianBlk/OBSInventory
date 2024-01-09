@@ -1,8 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://gbdag567qll7"]
+[gd_scene load_steps=8 format=3 uid="uid://gbdag567qll7"]
 
 [ext_resource type="Script" path="res://addons/OBSInventory/scripts/controls/inventory_list_stack.gd" id="1_2xn1p"]
 [ext_resource type="Resource" uid="uid://cj4k0qodiesv7" path="res://items/item_potion.tres" id="2_cf0b7"]
 [ext_resource type="Script" path="res://addons/OBSInventory/scripts/resources/item_stack.gd" id="3_6a5go"]
+[ext_resource type="Script" path="res://addons/OBSInventory/scripts/controls/inventory_list.gd" id="4_k45i8"]
+[ext_resource type="Script" path="res://addons/OBSInventory/scripts/resources/item_stash.gd" id="5_o86xg"]
 
 [sub_resource type="Resource" id="Resource_0mx5b"]
 script = ExtResource("3_6a5go")
@@ -10,6 +12,11 @@ id = -1
 item = ExtResource("2_cf0b7")
 quantity = 18
 meta_data = {}
+
+[sub_resource type="Resource" id="Resource_x6a72"]
+script = ExtResource("5_o86xg")
+max_stacks = 1
+stack_list = Array[ExtResource("3_6a5go")]([])
 
 [node name="ListInventoryDemo" type="Control"]
 layout_mode = 3
@@ -21,9 +28,16 @@ grow_vertical = 2
 
 [node name="InventoryListStack" type="Control" parent="."]
 anchors_preset = 0
-offset_left = 502.0
-offset_top = 241.0
-offset_right = 693.0
-offset_bottom = 307.0
+offset_left = 269.0
+offset_top = 242.0
+offset_right = 460.0
+offset_bottom = 308.0
 script = ExtResource("1_2xn1p")
 stack = SubResource("Resource_0mx5b")
+
+[node name="InventoryList" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("4_k45i8")
+stash = SubResource("Resource_x6a72")
