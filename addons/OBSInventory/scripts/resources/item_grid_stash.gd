@@ -97,7 +97,7 @@ func _DisconnectStash() -> void:
 		stash.item_quantity_changed.disconnect(_on_item_quantity_changed)
 
 func _GridContainsStash(g : Grid, s : ItemStash) -> bool:
-	var idlist : PackedInt32Array = s.get_ids()
+	var idlist : PackedInt64Array = s.get_ids()
 	for id in idlist:
 		if g.find_value(id).size() <= 0:
 			return false

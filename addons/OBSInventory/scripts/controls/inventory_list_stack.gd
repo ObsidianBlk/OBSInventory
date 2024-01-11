@@ -5,7 +5,7 @@ class_name InventoryListStack
 # ------------------------------------------------------------------------------
 # Signals
 # ------------------------------------------------------------------------------
-
+signal highlighted(active : bool)
 
 # ------------------------------------------------------------------------------
 # Constants and ENUMs
@@ -20,6 +20,9 @@ const DEFAULT_ITEM_ICON : Texture = preload("res://icon.svg")
 # ------------------------------------------------------------------------------
 @export_category("Inventory List Stack")
 @export var highlight : bool = false:				set = set_highlight
+@export_subgroup("Input Events")
+@export var event_interact : StringName = &""
+@export var event_alt_interact : StringName = &""
 
 # ------------------------------------------------------------------------------
 # Variables
@@ -98,7 +101,7 @@ func _ready() -> void:
 	if _ilsbase:
 		_ilsbase.mouse_entered.connect(_on_mouse_entered)
 		_ilsbase.mouse_exited.connect(_on_mouse_exited)
-		_ilsbase.resized.connect(_on_resized)
+		#_ilsbase.resized.connect(_on_resized)
 		add_child(_ilsbase)
 		_icon_container = _ilsbase.get_node_or_null("HLayout/IconContainer")
 		_icon = _ilsbase.get_node_or_null("HLayout/IconContainer/Icon")
@@ -107,6 +110,14 @@ func _ready() -> void:
 		_quantity_value = _ilsbase.get_node_or_null("HLayout/VLayout/QuantityValue")
 	_PostStackChange()
 	_UpdateTheme()
+
+func _gui_input(event: InputEvent) -> void:
+	if _ilsbase.mouse_filter == MOUSE_FILTER_IGNORE: return
+	
+	if event_interact != &"":
+		if event.is_action_pressed(event_interact):
+			grabbed.emit()
+			accept_event()
 
 func _notification(what : int) -> void:
 	match what:
@@ -260,10 +271,15 @@ func _on_quantity_changed() -> void:
 func _on_mouse_entered() -> void:
 	_mouse_within = true
 	_UpdatePanelTheme()
+	highlighted.emit(true)
 
 func _on_mouse_exited() -> void:
 	_mouse_within = false
 	_UpdatePanelTheme()
-
-func _on_resized() -> void:
-	reset_size()
+	highlighted.emit(false)
+#
+#func _on_resized() -> void:
+	## TODO: Does this do nothing for me?
+	#print("Base Resized: ", _ilsbase.get_size(), get_size())
+	##resized.emit()
+	##reset_size()

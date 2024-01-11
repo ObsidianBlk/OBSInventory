@@ -32,6 +32,8 @@ const DEFAULT_THEME : Theme = preload("res://addons/OBSInventory/inventory_defau
 var _inv_item_container : WeakRef = weakref(null)
 var _stack_nodes : Dictionary = {}
 
+var _active_item : InventoryListStack = null
+
 # ------------------------------------------------------------------------------
 # Setters
 # ------------------------------------------------------------------------------
@@ -49,6 +51,25 @@ func set_stash (s : ItemStash) -> void:
 func _ready() -> void:
 	_ConnectStash()
 	_BuildListFromStash()
+
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_SORT_CHILDREN:
+			var rect : Rect2 = Rect2()
+			for child : Control in get_children():
+				child.reset_size()
+				var child_size : Vector2 = child.get_size()
+				if child_size.x > rect.size.x:
+					rect.size.x = child_size.x
+				rect.size.y += child_size.y
+			
+			if not get_size().is_equal_approx(rect.size):
+				set_size(rect.size)
+			
+			for child : Control in get_children():
+				var child_size : Vector2 = child.get_size()
+				child_size.x = rect.size.x
+				child.set_size(child_size)
 
 # ------------------------------------------------------------------------------
 # Private Methods
@@ -102,14 +123,34 @@ func _AddItemToList(id : int) -> void:
 	if stack != null:
 		var list_stack : InventoryListStack = InventoryListStack.new()
 		list_stack.stack = stack
-		add_child(list_stack)
-		_stack_nodes[id] = list_stack
+		list_stack.size_flags_horizontal = Control.SIZE_FILL
+		list_stack.event_interact = event_interact
+		list_stack.event_alt_interact = event_alt_interact
+		_AddListStackNode(list_stack)
+
+func _AddListStackNode(list_stack : InventoryListStack) -> void:
+	if list_stack == null: return
+	if list_stack.stack == null: return
+	if list_stack.stack.id < 0 or list_stack.stack.id in _stack_nodes: return
+	if not list_stack.grabbed.is_connected(_on_stash_item_grabbed.bind(list_stack.stack.id)):
+		list_stack.grabbed.connect(_on_stash_item_grabbed.bind(list_stack.stack.id))
+	add_child(list_stack)
+	_stack_nodes[list_stack.stack.id] = list_stack
 
 func _RemoveItemFromList(id : int) -> void:
 	if not id in _stack_nodes: return
 	remove_child(_stack_nodes[id])
 	_stack_nodes[id].queue_free()
 	_stack_nodes.erase(id)
+
+func _RemoveListStackNode(id : int) -> InventoryListStack:
+	if not id in _stack_nodes: return null
+	var list_stack : InventoryListStack = _stack_nodes[id]
+	_stack_nodes.erase(id)
+	remove_child(list_stack)
+	if list_stack.grabbed.is_connected(_on_stash_item_grabbed.bind(id)):
+		list_stack.grabbed.disconnect(_on_stash_item_grabbed.bind(id))
+	return list_stack
 
 func _FindContainerNode() -> InventoryTransitionContainer:
 	if _inv_item_container.get_ref() != null:
@@ -124,6 +165,22 @@ func _FindContainerNode() -> InventoryTransitionContainer:
 	
 	return null
 
+#TODO: Instead of passing an InventoryListStack directly, send just the ID?
+func _InventoryStackGrabbed(ilstack : InventoryListStack, container : InventoryTransitionContainer) -> void:	
+	if container.is_holding_stack(): return
+	#igstack.follow_mouse()
+	ilstack.highlight = false
+	
+	var gpos : Vector2 = ilstack.global_position
+	
+	#TODO: Rethink the Add/Remove Stack helper methods
+	# I'm forgetting that "moving" a stack removes a stack from the stash.
+	
+	#_RemoveStack(ilstack.stack, false)
+	#grid_stash.remove_stack_by_id(igstack.stack.id)
+	#container.add_child(ilstack)
+	#ilstack.global_position = gpos
+
 # ------------------------------------------------------------------------------
 # Public Methods
 # ------------------------------------------------------------------------------
@@ -132,6 +189,7 @@ func _FindContainerNode() -> InventoryTransitionContainer:
 # ------------------------------------------------------------------------------
 # Handler Methods
 # ------------------------------------------------------------------------------
+
 func _on_stash_data_reset() -> void:
 	_EmptyList()
 	if stash.size() > 0:
@@ -156,6 +214,23 @@ func _on_stash_item_changed(id : int) -> void:
 	print("Stack changed: ", id)
 	queue_sort()
 	#sort_children.emit()
+
+func _on_stash_item_highlighted(active : bool, id : int) -> void:
+	if not id in _stack_nodes: return
+	
+	if active:
+		if _active_item == null or _active_item.stack.id != id:
+			_active_item = _stack_nodes[id]
+	else:
+		if _active_item != null and _active_item.stack.id == id:
+			_active_item = null
+
+func _on_stash_item_grabbed(id : int) -> void:
+	if not id in _stack_nodes: return
+	
+	var container : InventoryTransitionContainer = _FindContainerNode()
+	if container == null: return
+	_InventoryStackGrabbed(_stack_nodes[id], container)
 
 func _on_stash_changed() -> void:
 	queue_sort()

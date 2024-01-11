@@ -6,16 +6,20 @@
 anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
+size_flags_horizontal = 3
 
 [node name="HLayout" type="HBoxContainer" parent="."]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="IconContainer" type="AspectRatioContainer" parent="HLayout"]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
+mouse_filter = 2
 
 [node name="Icon" type="TextureRect" parent="HLayout/IconContainer"]
 layout_mode = 2
+mouse_filter = 2
 texture = ExtResource("1_t8uxq")
 expand_mode = 1
 stretch_mode = 5
@@ -27,9 +31,11 @@ text = "Inventory Item Name"
 
 [node name="VSeparator" type="VSeparator" parent="HLayout"]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="VLayout" type="VBoxContainer" parent="HLayout"]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="QuantityLabel" type="Label" parent="HLayout/VLayout"]
 layout_mode = 2

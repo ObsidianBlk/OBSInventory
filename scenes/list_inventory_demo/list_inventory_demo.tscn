@@ -1,38 +1,64 @@
-[gd_scene load_steps=12 format=3 uid="uid://gbdag567qll7"]
+[gd_scene load_steps=13 format=3 uid="uid://gbdag567qll7"]
 
-[ext_resource type="Script" path="res://addons/OBSInventory/scripts/controls/inventory_list_stack.gd" id="1_2xn1p"]
-[ext_resource type="Resource" uid="uid://bt8bvp6l8fwa5" path="res://items/item_sword.tres" id="2_01nee"]
+[ext_resource type="Script" path="res://scenes/grid_inventory_demo/inventory_window.gd" id="1_5xdse"]
 [ext_resource type="Resource" uid="uid://cj4k0qodiesv7" path="res://items/item_potion.tres" id="2_cf0b7"]
 [ext_resource type="Script" path="res://addons/OBSInventory/scripts/resources/item_stack.gd" id="3_6a5go"]
 [ext_resource type="Script" path="res://addons/OBSInventory/scripts/controls/inventory_list.gd" id="4_k45i8"]
 [ext_resource type="Script" path="res://addons/OBSInventory/scripts/resources/item_stash.gd" id="5_o86xg"]
 [ext_resource type="Resource" uid="uid://crxkdri10fikd" path="res://items/item_small_sword.tres" id="6_hn6s8"]
+[ext_resource type="Script" path="res://addons/OBSInventory/scripts/controls/InventoryTransitionContainer.gd" id="7_rb827"]
 
-[sub_resource type="Resource" id="Resource_0mx5b"]
-script = ExtResource("3_6a5go")
-id = -1
-item = ExtResource("2_01nee")
-quantity = 0
-meta_data = {}
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xupen"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.741176, 0.741176, 0.741176, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.121569, 0.121569, 0.121569, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_left = 8.0
+expand_margin_right = 8.0
 
-[sub_resource type="Resource" id="Resource_nwar3"]
-script = ExtResource("3_6a5go")
-id = 3497510516
-item = ExtResource("6_hn6s8")
-quantity = 0
-meta_data = {}
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4p354"]
+content_margin_left = 8.0
+content_margin_top = 24.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.121569, 0.121569, 0.121569, 1)
+border_width_left = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.658824, 0.658824, 0.658824, 1)
+border_blend = true
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
 
-[sub_resource type="Resource" id="Resource_rah1u"]
+[sub_resource type="Resource" id="Resource_r4av2"]
 script = ExtResource("3_6a5go")
-id = 3832384771
+id = 3621588588
 item = ExtResource("2_cf0b7")
-quantity = 0
+quantity = 10
 meta_data = {}
 
-[sub_resource type="Resource" id="Resource_ssy13"]
+[sub_resource type="Resource" id="Resource_1sps8"]
+script = ExtResource("3_6a5go")
+id = 1941339198
+item = ExtResource("6_hn6s8")
+quantity = 1
+meta_data = {}
+
+[sub_resource type="Resource" id="Resource_8r5oa"]
 script = ExtResource("5_o86xg")
 max_stacks = 2
-stack_list = Array[ExtResource("3_6a5go")]([SubResource("Resource_nwar3"), SubResource("Resource_rah1u")])
+stack_list = Array[ExtResource("3_6a5go")]([SubResource("Resource_r4av2"), SubResource("Resource_1sps8")])
 
 [node name="ListInventoryDemo" type="Control"]
 layout_mode = 3
@@ -42,19 +68,50 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="InventoryListStack" type="Control" parent="."]
-anchors_preset = 0
-offset_left = 269.0
-offset_top = 242.0
-offset_right = 504.0
-offset_bottom = 308.0
-mouse_filter = 2
-script = ExtResource("1_2xn1p")
-stack = SubResource("Resource_0mx5b")
+[node name="WindowContainer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="InventoryList" type="VBoxContainer" parent="."]
+[node name="ListWindowA" type="VBoxContainer" parent="WindowContainer" node_paths=PackedStringArray("titlebar")]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 90.0
+offset_top = 77.0
+offset_right = 341.0
+offset_bottom = 258.0
+theme_override_constants/separation = -18
+script = ExtResource("1_5xdse")
+titlebar = NodePath("Titlebar")
+input_interact = &"interact"
+
+[node name="Titlebar" type="PanelContainer" parent="WindowContainer/ListWindowA"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_xupen")
+
+[node name="Label" type="Label" parent="WindowContainer/ListWindowA/Titlebar"]
+layout_mode = 2
+text = "Window A"
+
+[node name="Body" type="PanelContainer" parent="WindowContainer/ListWindowA"]
+show_behind_parent = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4p354")
+
+[node name="InventoryList" type="VBoxContainer" parent="WindowContainer/ListWindowA/Body"]
+layout_mode = 2
 script = ExtResource("4_k45i8")
-stash = SubResource("Resource_ssy13")
+stash = SubResource("Resource_8r5oa")
+
+[node name="ITC" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("7_rb827")
